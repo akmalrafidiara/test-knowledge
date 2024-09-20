@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\StaffRepositoryInterface;
+use App\Jobs\SendStaffAddedNotification;
 
 class StaffService
 {
@@ -24,6 +25,12 @@ class StaffService
             'name' => $name,
             'job_title' => $jobTitle,
         ];
-        return $this->staffRepository->createStaff($data);
+
+        $staff = $this->staffRepository->createStaff($data);
+
+        // SendStaffAddedNotification::dispatch($staff);
+        dispatch(new SendStaffAddedNotification($staff));
+
+        return $staff;
     }
 }
